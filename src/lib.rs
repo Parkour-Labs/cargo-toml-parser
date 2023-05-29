@@ -1,14 +1,48 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+use macros::Builder;
+use serde::{Deserialize, Serialize};
+
+#[derive(
+    Debug, Default, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Builder,
+)]
+pub struct CargoToml {
+    pub package: Option<Package>,
+    pub workspace: Option<Workspace>,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[derive(
+    Debug, Default, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Builder,
+)]
+pub struct Package {
+    pub name: Option<String>,
+}
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+#[derive(
+    Debug, Default, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Builder,
+)]
+pub struct Workspace {
+    pub members: Vec<String>,
+}
+
+impl TryFrom<&str> for CargoToml {
+    type Error = toml::de::Error;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        toml::from_str(value)
+    }
+}
+
+impl TryFrom<&str> for Package {
+    type Error = toml::de::Error;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        toml::from_str(value)
+    }
+}
+
+impl TryFrom<&str> for Workspace {
+    type Error = toml::de::Error;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        toml::from_str(value)
     }
 }
